@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+    microps:
+        build: .
+        volumes:
+            - .:/microps
+
+        working_dir: /microps
+        stdin_open: true
+        tty: true
+        privileged: true
