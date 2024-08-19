@@ -87,3 +87,36 @@ int net_input_handler(uint16_t type, const uint8_t *data, size_t len, struct net
     debugdump(data, len);
     return 0;
 }
+
+// 登録済みの全デバイスをnet_device_openで開く（プロトコルスタックの起動）
+int net_run(void)
+{
+    struct net_device *dev;
+
+    debugf("open all devices...");
+    for (dev = devices; dev; dev = dev->next) {
+        net_device_open(dev);
+    }
+    debugf("running...");
+    return 0;
+}
+
+// 登録済みの全デバイスをnet_device_closeで開く（プロトコルスタックの停止）
+void net_shutdown(void)
+{
+    struct net_device *dev;
+
+    debugf("close all devices...");
+    for (dev = devices; dev; dev = dev->next) {
+        net_device_close(dev);
+    }
+    debugf("shutting down");
+}
+
+// ネットワークデバイスの初期化？
+int net_init(void)
+{
+    infof("initialized");
+    return 0;
+}
+
