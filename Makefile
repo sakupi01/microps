@@ -28,7 +28,7 @@ all: $(APPS) $(TESTS)
 $(APPS): %.exe : %.o $(OBJS) $(DRIVERS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-$(TESTS): %.exe : %.o $(OBJS) $(DRIVERS) test/test.h
+$(TESTS): %.exe : %.o $(OBJS) $(DRIVERS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 .c.o:
