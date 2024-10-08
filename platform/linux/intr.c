@@ -68,39 +68,6 @@ intr_init(void)
     return 0;
 }
 
-
-// 割り込み処理が実行できるようになるまで待機＆割り込み処理スレッドを作成
-int
-intr_run(void)
-{
-    int err;
-
-    err = pthread_sigmask(SIG_BLOCK, &sigmask, NULL);
-    if (err) {
-        errorf("pthread_sigmask() %s", strerror(err));
-        return -1;
-    }
-    err = pthread_create(&tid, NULL, intr_thread, NULL);
-    if (err) {
-        errorf("pthread_create() %s", strerror(err));
-        return -1;
-    }
-    pthread_barrier_wait(&barrier);
-    return 0;
-}
-
-// 割り込み処理スレッドにシグナルを送信して終わるのを待つ
-void
-intr_shutdown(void)
-{
-    if (pthread_equal(tid, pthread_self()) != 0) {
-        /* Thread not created. */
-        return;
-    }
-    pthread_kill(tid, SIGHUP);
-    pthread_join(tid, NULL);
-}
-
 // 割り込みスレッドのエントリポイント
 static void *
 intr_thread(void *arg)
@@ -132,6 +99,38 @@ intr_thread(void *arg)
     }
     debugf("terminated");
     return NULL;
+}
+
+// 割り込み処理が実行できるようになるまで待機＆割り込み処理スレッドを作成
+int
+intr_run(void)
+{
+    int err;
+
+    err = pthread_sigmask(SIG_BLOCK, &sigmask, NULL);
+    if (err) {
+        errorf("pthread_sigmask() %s", strerror(err));
+        return -1;
+    }
+    err = pthread_create(&tid, NULL, intr_thread, NULL);
+    if (err) {
+        errorf("pthread_create() %s", strerror(err));
+        return -1;
+    }
+    pthread_barrier_wait(&barrier);
+    return 0;
+}
+
+// 割り込み処理スレッドにシグナルを送信して終わるのを待つ
+void
+intr_shutdown(void)
+{
+    if (pthread_equal(tid, pthread_self()) != 0) {
+        /* Thread not created. */
+        return;
+    }
+    pthread_kill(tid, SIGHUP);
+    pthread_join(tid, NULL);
 }
 
 static pthread_t tid;

@@ -136,7 +136,7 @@ void net_shutdown(void)
 // ネットワークデバイスの初期化？
 int net_init(void)
 {
-    if (intr_init() == -1) {　// 割り込み機構の初期化
+    if (intr_init() == -1) {// 割り込み機構の初期化
         errorf("intr_init() failure");
         return -1;
     }

@@ -15,7 +15,7 @@ static int dummy_transmit(struct net_device *dev, uint16_t type, const uint8_t *
     debugf("dev=%s, type=0x%04x, len=%zu", dev->name, type, len);
     debugdump(data, len);
     /* drop data */
-    intr_raise_irq(DUMMY_IRQ); // テスト用の割り込み処理
+    intr_raise_irq(DUMMY_IRQ); // テスト用の割り込み処理 // 割り込みを待機するスレッドに通知する
     return 0;
 }
 
