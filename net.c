@@ -6,7 +6,7 @@
 #include <signal.h>
 #include <sys/time.h>
 
-#include "platform.h"
+#include "platform/linux/platform.h"
 
 #include "util.h"
 #include "net.h"
@@ -109,7 +109,10 @@ int net_input_handler(uint16_t type, const uint8_t *data, size_t len, struct net
 int net_run(void)
 {
     struct net_device *dev;
-
+    if (intr_run() == -1) { // 割り込み機構の起動
+        errorf("intr_run() failure");
+        return -1;
+    }
     debugf("open all devices...");
     for (dev = devices; dev; dev = dev->next) {
         net_device_open(dev);
@@ -122,7 +125,7 @@ int net_run(void)
 void net_shutdown(void)
 {
     struct net_device *dev;
-
+    intr_shutdown();
     debugf("close all devices...");
     for (dev = devices; dev; dev = dev->next) {
         net_device_close(dev);
@@ -133,6 +136,10 @@ void net_shutdown(void)
 // ネットワークデバイスの初期化？
 int net_init(void)
 {
+    if (intr_init() == -1) {　// 割り込み機構の初期化
+        errorf("intr_init() failure");
+        return -1;
+    }
     infof("initialized");
     return 0;
 }
